@@ -1,0 +1,77 @@
+float4 lightDir;
+float4x4 view_matrix;
+float4x4 view_proj_matrix;
+struct VS_INPUT
+{
+   float4 Pos      : POSITION0;
+   float3 Normal   : NORMAL0;
+   float2 TexCoord : TEXCOORD0;
+};
+
+struct VS_OUTPUT
+{
+   float4 Pos           : POSITION0;
+   float2 TexCoord      : TEXCOORD0;
+   float3 HatchWeights0 : TEXCOORD1;
+   float3 HatchWeights1 : TEXCOORD2;
+};
+
+VS_OUTPUT vs_main( VS_INPUT In )
+{
+   VS_OUTPUT Out; 
+
+   Out.Pos = mul( view_proj_matrix, In.Pos );
+   Out.TexCoord = In.TexCoord;
+
+   float3 posW    = mul( view_matrix, In.Pos );
+   float3 normalW = normalize(mul( (float3x3)view_matrix, In.Normal ));
+
+   float  diffuse = min(1.0,max(0,dot(-lightDir,normalW)));
+   diffuse = diffuse * diffuse;
+   diffuse = diffuse * diffuse;
+
+   float  hatchFactor = diffuse * 5.0;
+   float3 weight0 = 0.05;
+   float3 weight1 = 0.05;
+
+   if (hatchFactor>5.0)
+   {
+      weight0.x = 1.0;
+   } // End if
+
+   else if (hatchFactor>4.0)
+   {
+      weight0.x = 1.0 - (5.0 - hatchFactor);
+      weight0.y = 1.0 - weight0.x;
+   } // End else if
+
+   else if (hatchFactor>3.0)
+   {
+      weight0.y = 1.0 - (4.0 - hatchFactor);
+      weight0.z = 1.0 - weight0.y;
+   } // End else if
+
+   else if (hatchFactor>2.0)
+   {
+      weight0.z = 1.0 - (3.0 - hatchFactor);
+      weight1.x = 1.0 - weight0.z;
+   } // End else if
+
+   else if (hatchFactor>1.0)
+   {
+      weight1.x = 1.0 - (2.0 - hatchFactor);
+      weight1.y = 1.0 - weight1.x;
+   } // End else if
+
+   else if (hatchFactor>0.0)
+   {
+      weight1.y = 1.0 - (1.0 - hatchFactor);
+      weight1.z = 1.0 - weight1.y;
+   } // End else if
+
+   Out.HatchWeights0 = weight0;
+   Out.HatchWeights1 = weight1;
+
+   return Out;
+}
+

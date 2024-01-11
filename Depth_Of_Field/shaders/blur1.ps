@@ -1,0 +1,33 @@
+
+uniform float sampleDist1;
+uniform sampler2D RT : register(s0);
+
+float4 pixelMain(in float2 vTexCoord : TEXCOORD0) : COLOR
+{
+	float4 samples[6] = {
+	-0.526212, -0.605805, 
+		-0.222222, -0.111111,
+		-0.695123,  0.412334,
+		-0.212345,  0.612346,
+		0.962340, -0.194573,
+		0.473434, -0.487626,
+		0.519456,  0.767022,
+		0.167461, -0.893124,
+		0.507431,  0.064245,
+		0.896420,  0.412538,
+		-0.345940, -0.931615,
+		-0.792659, -0.591125,
+	};
+
+	float4 sum = tex2D(RT, vTexCoord);
+
+	for (int i=0; i<6; i++)
+	{
+		sum += tex2D(RT, vTexCoord + sampleDist1 * samples[i].xy);
+		sum += tex2D(RT, vTexCoord + sampleDist1 * samples[i].zw);
+	}
+
+	sum /= 13.0;
+
+	return float4(sum);
+}

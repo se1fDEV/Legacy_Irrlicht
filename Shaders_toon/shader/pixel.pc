@@ -1,0 +1,50 @@
+sampler ToonShaderTexture;
+struct PS_INPUT
+{
+   float2 TexCoord : TEXCOORD0;
+};
+
+struct PS_OUTPUT
+{
+   float4 Color    : COLOR0;
+};
+
+PS_OUTPUT ps_main( PS_INPUT In )
+{
+    PS_OUTPUT Out;
+ 
+    Out.Color = tex2D(ToonShaderTexture,In.TexCoord);
+    
+    return Out;
+}
+
+float4x4 view_proj_matrix: register(c0);
+float4x4 view_matrix;
+float4 lightDir;
+struct VS_INPUT
+{
+   float4 Pos    : POSITION0;
+   float3 Normal : NORMAL0;
+};
+
+struct VS_OUTPUT
+{
+   float4 Pos      : POSITION0;
+   float2 TexCoord : TEXCOORD0;
+};
+
+VS_OUTPUT vs_main( VS_INPUT In )
+{
+   VS_OUTPUT Out; 
+
+   Out.Pos = mul( view_proj_matrix, In.Pos );
+
+   float3 posW    = mul( view_matrix, In.Pos );
+   float3 normalW = mul( (float3x3)view_matrix, In.Normal );
+
+   float diffuse = max(0,dot(-lightDir,normalW));
+   Out.TexCoord.x = diffuse;
+   Out.TexCoord.y = 0.0f;
+
+   return Out;
+}

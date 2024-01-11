@@ -1,0 +1,42 @@
+//float4 MiscParam;
+sampler Hatch0;
+sampler Hatch1;
+sampler Hatch2;
+sampler Hatch3;
+sampler Hatch4;
+sampler Hatch5;
+struct PS_INPUT
+{
+   float2 TexCoord      : TEXCOORD0;
+   float3 HatchWeights0 : TEXCOORD1;
+   float3 HatchWeights1 : TEXCOORD2;
+};
+
+struct PS_OUTPUT
+{
+   float4 Color    : COLOR0;
+};
+
+PS_OUTPUT ps_main( PS_INPUT In )
+{
+    PS_OUTPUT Out;
+ 
+    float4 hatchTex0 = tex2D(Hatch0,In.TexCoord) * In.HatchWeights0.x;
+    float4 hatchTex1 = tex2D(Hatch1,In.TexCoord) * In.HatchWeights0.y;
+    float4 hatchTex2 = tex2D(Hatch2,In.TexCoord) * In.HatchWeights0.z;
+    float4 hatchTex3 = tex2D(Hatch3,In.TexCoord) * In.HatchWeights1.x;
+    float4 hatchTex4 = tex2D(Hatch4,In.TexCoord) * In.HatchWeights1.y;
+    float4 hatchTex5 = tex2D(Hatch5,In.TexCoord) * In.HatchWeights1.z;
+    
+    float4 hatchColor = hatchTex0 +
+                        hatchTex1 +
+                        hatchTex2 +
+                        hatchTex3 +
+                        hatchTex4 +
+                        hatchTex5;
+
+    Out.Color = hatchColor;
+
+    return Out;
+}
+
