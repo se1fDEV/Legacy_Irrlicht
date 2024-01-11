@@ -1,6 +1,5 @@
 # Legacy_Irrlicht
-Just for history and posterity
-Simple demos using the Irrlicht Engine in 2009
+A mere footnote in history's grand tapestry, these humble creations stand as simple demos born from the prowess of the Irrlicht Engine, circa 2009.
 
-More details here:
+For a deeper dive into the annals of my digital escapades, delve into the depths of my website.
 https://se1f.dev/hobby
